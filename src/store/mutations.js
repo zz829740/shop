@@ -33,7 +33,9 @@ export default {
 	SET_CART: (state, cart) => {
 		state.cart = cart
 	},
-	
+	SET_ORDER: (state, order) => {
+		state.order = order
+	},	
 	ADD_TO_CART: (state, cart) => {
 		state.cart = cart
 	},

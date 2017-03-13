@@ -8,14 +8,14 @@ export default {
 				return arr[i]
 			}
 		}
-		return false		
+		return false
 	},
 	addToCart: ({commit, state, dispatch}, good) => {
 		const gid = good._id
 		var gname = good.gname
 		var gprice  = good.gprice
 		var tar = good
-		
+
 		return Vue.http.post('/api/addToCart', {gid})
 			.then(good => {
 				if(tar.inventory<=0){
@@ -23,22 +23,22 @@ export default {
 				}else{
 					tar.inventory--
 				}
-				
+
 				// commit('CHANGE_INVENTORY')
-				
+
 			})
 
 			.then(cart => {
 				const record = find(state.cart, 'cname', gname)
-				
+				//state.cart.find((item) => item.cname=gname)
 				if(!record){
-					
+
 					state.cart.push({
 						'cname': gname,
 						'cprice':gprice,
 						'count':1
 					})
-					commit('ADD_TO_CART', state.cart)						
+					commit('ADD_TO_CART', state.cart)
 				}else{
 					++record.count
 				}
@@ -49,23 +49,61 @@ export default {
 				console.log(err)
 			})
 	},
+	toggleItem ({state}, item) {
+		function chazhao(arr, attr, val){
+			for(let i=0;i<arr.length;i++){
+				if(arr[i][attr] == val){
+					return i;
+				}
+			}
+			return false
+		}
 
-	checkOut: ({commit, state, dispatch}, item) => {
-		// const cid = item._id
-		
+		let index = chazhao(state.cart, 'cname', item.cname)
+		if(state.cart[index].done == undefined){
+			Vue.set(state.cart[index],'done',true)
+
+		}else{
+			state.cart[index].done = !state.cart[index].done
+		}
+
+
+	},
+
+	checkOut: ({state}) => {
+		var order = state.cart.filter(item => item.done)
 		function chazhao(arr, attr, val){
 			for(let i=0;i<arr.length;i++){
 				if(arr[i][attr] == val){
 					return arr[i]
 				}
 			}
-			return false		
+			return false
 		}
-		chazhao(state.cart, 'cname', item.cname).count--;
-		return Vue.http.post('/api/checkOut', {item})
-			
-			.then(() => dispatch('getCarts'))
+		order.map((every)=>{
+			chazhao(state.cart, 'cname', every.cname).count--;
+		})
+		return Vue.http.post('/api/checkOut', order)
+
+			.then(() => dispatch('getOrder'))
+
 	},
+	// checkOut: ({commit, state, dispatch}, item) => {
+	// 	// const cid = item._id
+
+	// 	function chazhao(arr, attr, val){
+	// 		for(let i=0;i<arr.length;i++){
+	// 			if(arr[i][attr] == val){
+	// 				return arr[i]
+	// 			}
+	// 		}
+	// 		return false
+	// 	}
+	// 	chazhao(state.cart, 'cname', item.cname).count--;
+	// 	return Vue.http.post('/api/checkOut', {item})
+
+	// 		.then(() => dispatch('getCarts'))
+	// },
 
 	getCarts: ({commit}) => {
 		return Vue.http.get('/api/getCarts')
@@ -75,15 +113,23 @@ export default {
 				})
 	},
 
+	getOrder: ({commit}) => {
+		return Vue.http.get('/api/getOrder')
+				.then(response => response.json())
+				.then(order => {
+					commit('SET_ORDER', order)
+				})
+	},
+
 	getGoods: ({commit,state}) => {
-		
+
 		return Vue.http.get('/api/getGoods')
 
 			.then(response => response.json())
-			
+
 			.then(goods => {
 				console.log(goods)
-				
+
 				commit('SET_GOODS', goods)
 			})
 	},

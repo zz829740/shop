@@ -2,7 +2,7 @@
 
 	<div class="goods">
 		<div class="header">
-			<span class="sg">Shop Goods</span>
+			<span class="sg">Luxury Shop</span>
 
 			<button class="gocart"></button>
 		</div>

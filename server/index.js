@@ -18,16 +18,10 @@ app.use(bodyParser.urlencoded({extended: false}))
 // app.use(cookieParser())
 app.use('/dist', express.static(resolve('../dist')))
 app.use(api)
-
-// app.post('/api/setup', function (req, res) {
-//   new db.User(req.body)
-//     .save()
-//     .then(() => {
-//       res.status(200).end()
-//       db.initialized = true
-//     })
-//     .catch(() => res.status(500).end())
-// })
+//app.use(webpackDevMiddleware(compiler, {
+//   lazy: true,
+//   filename: "bundle.js" // Same as `output.filename` in most cases.
+// }));
 
 app.get('*', function (req, res) {
   const fileName = 'index.html'

@@ -30,13 +30,18 @@ const userSchema = new Schema({
 	}
 })
 
+const orderSchema = new Schema({
+	oname: String,
+	oprice: String,
+	ocount: Number
+})
 
 const Models = {
  
   Good: mongoose.model('Good', goodSchema),
   User: mongoose.model('User', userSchema),
   Cart: mongoose.model('Cart', cartSchema),
- 
+  Order: mongoose.model('Order', orderSchema),
   initialized: false
 }
 

@@ -9,28 +9,66 @@ router.get('/api/getCarts', (req, res) => {
     if(err){
       console.log(err)
     }else if(doc){
-      
+
       res.send(JSON.stringify(doc))
     }
   })
 })
 
-router.post('/api/checkOut', (req, res) => {
-  const item = req.body.item
+router.get('/api/getOrder', (req, res) => {
+  db.Order.find(null, 'oname oprice oount', (err, doc) => {
+    if(err){
+      console.log(err)
+    }else if(doc){
 
-  const cid = item._id
-  --item.count
-  const newitem = {
-    cname: item.cname,
-    cprice: item.cprice,
-    count: item.count
-  }
-  db.Cart.findByIdAndUpdate(cid, newitem, fn)
+      res.send(JSON.stringify(doc))
+    }
+  })
+})
+
+
+router.post('/api/checkOut', (req, res) => {
+  console.log(req.body)
+  // if(err){
+  //   console.log(err)
+  // }
+  // const order = req.body.order
+  req.body.map((item)=>{
+
+    const cid = item._id
+    --item.count
+    const newitem = {
+      cname: item.cname,
+      cprice: item.cprice,
+      count: item.count
+    }
+
+    db.Cart.findByIdAndUpdate(cid, newitem, fn)
+
+    const neworder = {
+      oname: item.cname,
+      oprice: item.cprice,
+      ocount: 1
+    }
+    db.Order(neworder).save()
+  })
+  // order.map((item) => {
+  //   const cid = item._id
+  //   --item.count
+  //   const newitem = {
+  //     cname: item.cname,
+  //     cprice: item.cprice,
+  //     count: item.count
+  //   }
+  //   db.Cart.findByIdAndUpdate(cid, newitem, fn)
+  //   db.Order(item).save()
+  // })
+
 })
 
 router.post('/api/addToCart', (req,res) => {
   const gid = req.body.gid
-  
+
   var cname, count, cprice,update;
   //查询信息
   db.Good.findById(gid, function(err, info){
@@ -51,8 +89,8 @@ router.post('/api/addToCart', (req,res) => {
       db.Good.findByIdAndUpdate(gid, newgood,fn)
       cname = info.gname
       cprice = info.gprice
-      
-      
+
+
         db.Cart.findOne({cname: cname},(err,result) => {
           if(err){
             console.log(err)
@@ -62,7 +100,7 @@ router.post('/api/addToCart', (req,res) => {
               console.log('err')
 
             }else{
-              
+
               ++result.count
               db.Cart.findOneAndUpdate({cname},result,fn);
             }
@@ -73,13 +111,13 @@ router.post('/api/addToCart', (req,res) => {
               cprice: cprice,
               count: 1
             }
-            
+
             new db.Cart(cart).save()
           }
 
         })
       }
-    }  
+    }
   })
 
   res.status(200).end()
@@ -91,7 +129,7 @@ router.get('/api/getGood', (req, res) => {
     if (err) {
       console.log(err)
     } else if (doc) {
-      
+
       res.send(doc)
     }
   })
@@ -101,11 +139,11 @@ router.get('/api/getGoods', (req, res) => {
 
   db.Good.find(null, 'gname gprice inventory image', (err, doc) => {
     if (err) {
-     
+
       console.log(err)
-      
+
     } else if (doc) {
-      
+
       res.send(JSON.stringify(doc))
     }
   })
@@ -122,7 +160,7 @@ router.post('/api/login', (req, res) => {
       console.log(err)
 
     }else{
-      
+
       console.log(res)
     }
   })
@@ -142,7 +180,7 @@ router.post('/api/addUser', (req, res) => {
 })
 
 router.post('/api/saveGood', (req, res) => {
-  
+
   const good = {
     gname: req.body.gname,
     gprice: req.body.gprice,
@@ -156,26 +194,14 @@ router.post('/api/saveGood', (req, res) => {
 })
 
 router.post('/api/deleteGood', (req, res) => {
-  
+
   db.Good.findByIdAndRemove(req.body.id, fn)
   res.status(200).end()
 })
 
 //报错： cannot read property 'find' of undefined
 //未解决
-router.get('/api/getArticles', (req, res) => {
-  db.Article.find(null, 'title content', (err, doc) => {
-    if (err) {
-     
-      console.log(err)
-      
-    } else if (doc) {
-      console.log(doc)
-      res.send(JSON.stringify(doc))
-    }
-  })
 
-})
 
 // router.post('/api/getLinks', (req, res) => {
 //   db.Link.find(null, (err, doc) => {
