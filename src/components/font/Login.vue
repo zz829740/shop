@@ -7,9 +7,6 @@
 					<div class="modal-container">
 						
 						<div class="modal-header">
-							<!-- <slot name="header">
-								default header
-							</slot> -->
 							
 						</div>
 
@@ -27,9 +24,6 @@
 								<button class="login" @click="dologin()">
 									Login
 								</button>
-								<!-- <button class="modal-default-button" @click="$emit('close')">
-									取消
-								</button> -->
 							</slot>
 						</div>
 
@@ -54,8 +48,6 @@ export default {
 	},
 	methods: {
 		dologin(){
-			// if(!this.name.length) return this.info="请输入正确的用户名"
-			// if(!this.pwd.length) return this.info="请输入正确的密码"
 			
 			this.login({name: this.name, pwd: this.pwd})
 				.then(() => {
@@ -70,10 +62,6 @@ export default {
 		...mapActions(['login'])
 	}
 
-	// watch: {
-	// 	name: 'clearInfo',
-	// 	pwd: 'clearInfo'
-	// }
 }
 
 </script>
